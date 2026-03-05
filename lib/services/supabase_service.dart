@@ -9,7 +9,6 @@ class SupabaseService {
   /// Envia (ou atualiza) uma venda aprovada e seus itens para o Supabase.
   /// Usa upsert para ser idempotente (seguro reenviar).
   Future<void> syncSale(Sale sale, List<SaleItem> items) async {
-    // Upsert da venda principal
     await _client.from('sales').upsert({
       'id': sale.id,
       'date': sale.date.toUtc().toIso8601String(),
@@ -20,7 +19,6 @@ class SupabaseService {
       'approved_at': sale.approvedAt?.toUtc().toIso8601String(),
     });
 
-    // Upsert dos itens da venda
     if (items.isNotEmpty) {
       await _client.from('sale_items').upsert(
         items

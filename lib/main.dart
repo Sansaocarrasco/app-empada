@@ -46,10 +46,10 @@ class AppEmpada extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => SettingsProvider()..load()),
         ChangeNotifierProvider(create: (_) => ProductProvider()..loadProducts()),
-        ChangeNotifierProvider(create: (_) => SaleProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()..load()),
-        // Injeta o MercadoPagoService no SaleProvider quando as config carregarem
-        ProxyProvider<SettingsProvider, SaleProvider>(
+        // SaleProvider recebe o MercadoPagoService do SettingsProvider automaticamente
+        ChangeNotifierProxyProvider<SettingsProvider, SaleProvider>(
+          create: (_) => SaleProvider(),
           update: (_, settingsProv, saleProv) {
             saleProv!.setMpService(settingsProv.mpService);
             return saleProv;

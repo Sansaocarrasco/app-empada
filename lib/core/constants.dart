@@ -7,7 +7,7 @@ class AppConstants {
 
   // Database
   static const String dbName = 'app_empada.db';
-  static const int dbVersion = 1;
+  static const int dbVersion = 2;
 
   // Tabelas
   static const String tableProducts = 'products';

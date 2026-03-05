@@ -125,8 +125,9 @@ class SaleProvider extends ChangeNotifier {
           final items = await _saleRepo.getItemsBySale(saleId);
           await _supabaseService.syncSale(approvedSale, items);
         }
-      } catch (e) {
-        debugPrint('Supabase sync failed (não crítico): $e');
+      } catch (e, stack) {
+        debugPrint('⚠️ Supabase sync FALHOU: ${e.runtimeType}: $e');
+        debugPrint(stack.toString());
       }
 
       clearCart();
