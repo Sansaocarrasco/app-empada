@@ -6,10 +6,10 @@ import '../models/sale_item.dart';
 class SupabaseService {
   SupabaseClient get _client => Supabase.instance.client;
 
-  /// Envia (ou atualiza) uma venda aprovada e seus itens para o Supabase.
-  /// Usa upsert para ser idempotente (seguro reenviar).
+  /// Envia a venda aprovada e seus itens para o Supabase.
   Future<void> syncSale(Sale sale, List<SaleItem> items) async {
-    await _client.from('sales').upsert({
+    // INSERT simples — cada venda tem UUID único, não há conflito
+    await _client.from('sales').insert({
       'id': sale.id,
       'date': sale.date.toUtc().toIso8601String(),
       'total_amount': sale.totalAmount,
@@ -20,7 +20,7 @@ class SupabaseService {
     });
 
     if (items.isNotEmpty) {
-      await _client.from('sale_items').upsert(
+      await _client.from('sale_items').insert(
         items
             .map((item) => {
                   'id': item.id,

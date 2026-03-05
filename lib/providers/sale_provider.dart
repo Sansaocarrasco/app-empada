@@ -93,6 +93,7 @@ class SaleProvider extends ChangeNotifier {
 
   /// Confirma a venda aprovada, decrementa estoque e sincroniza com Supabase.
   Future<void> approveSale(String saleId, String mpPaymentId) async {
+    debugPrint('🟢 approveSale chamado — saleId: $saleId, mpId: $mpPaymentId');
     _isLoading = true;
     notifyListeners();
     try {
@@ -115,7 +116,9 @@ class SaleProvider extends ChangeNotifier {
 
       // 4. Sincroniza com Supabase (falha silenciosa)
       try {
+        debugPrint('🔵 [Supabase] Iniciando sync — saleId: $saleId');
         final saleData = await _saleRepo.getById(saleId);
+        debugPrint('🔵 [Supabase] getById retornou: ${saleData?.id ?? "NULL"}');
         if (saleData != null) {
           final approvedSale = saleData.copyWith(
             payerName: details['payer_name'] as String?,
@@ -123,7 +126,9 @@ class SaleProvider extends ChangeNotifier {
             approvedAt: details['approved_at'] as DateTime?,
           );
           final items = await _saleRepo.getItemsBySale(saleId);
+          debugPrint('🔵 [Supabase] Enviando ${items.length} itens...');
           await _supabaseService.syncSale(approvedSale, items);
+          debugPrint('✅ [Supabase] Sync concluído com sucesso!');
         }
       } catch (e, stack) {
         debugPrint('⚠️ Supabase sync FALHOU: ${e.runtimeType}: $e');
